@@ -9,10 +9,10 @@ export default {
    * @param {*} credentials
    */
   register (credentials) {
-    return api().post('register', credentials)
+    return api().post('/user/register', credentials)
   },
   login (credentials) {
-    return api().post('login', credentials)
+    return api().post('/user/login', credentials)
   },
   getData (id) {
     return api().get('userdata/' + id)

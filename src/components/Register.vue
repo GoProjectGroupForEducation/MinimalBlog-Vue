@@ -54,8 +54,9 @@ export default {
         email: this.email,
         password: this.password
       }).then((res) => {
-        this.$store.dispatch('setToken', res.data.token)
-        this.$store.dispatch('setUser', res.data.user)
+        console.log(res.data)
+        this.$store.dispatch('setToken', res.data.data.token.token)
+        this.$store.dispatch('setUser', res.data.data.user)
         this.$router.push({name: 'Posts'})
       }).catch((err) => {
         this.$store.dispatch('addError', err.response.data.error)
