@@ -41,22 +41,8 @@ export default {
       }
     })
   },
-  updateComment (data, id, token) {
-    return api().put('articles/' + id + '/comments/', data, {
-      headers: {
-        'Authorization': token
-      }
-    })
-  },
-  deletePost (data, token) {
-    return api().post('post/delete', data, {
-      headers: {
-        'Authorization': token
-      }
-    })
-  },
-  deleteComment (data, token) {
-    return api().post('post/comment/delete', data, {
+  updateComment (data, id, token, commentId) {
+    return api().put('articles/' + id + '/comments/' + commentId, data, {
       headers: {
         'Authorization': token
       }

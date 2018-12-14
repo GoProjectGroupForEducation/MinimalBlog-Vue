@@ -9,13 +9,13 @@ export default {
    * @param {*} credentials
    */
   register (credentials) {
-    return api().post('/user/register', credentials)
+    return api().post('user/register', credentials)
   },
   login (credentials) {
-    return api().post('/user/login', credentials)
+    return api().post('user/login', credentials)
   },
   getData (id) {
-    return api().get('userdata/' + id)
+    return api().get('user/' + id)
   },
   getTopUsers () {
     return api().get('topusers')
@@ -37,10 +37,11 @@ export default {
   updateInfo (credentials) {
     return api().post('updateInfo', credentials)
   },
-  updateImage (data) {
+  updateImage (data, token) {
     var config = {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
       }
     }
     return api().post('updateImg', data, config)

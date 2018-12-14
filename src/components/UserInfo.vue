@@ -1,6 +1,6 @@
 <template>
   <div class="basic-div" id="info" @click="$router.push({name: 'Profile', params: {id: userId}})">
-    <div class="logo" :style="{backgroundImage: 'url(http://localhost:8081/' + user.path + ')'}"></div>
+    <div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div>
     <div class="basic-info">
       <ul class="info-list">
         <li class="username">{{user.username}}</li>
@@ -25,14 +25,6 @@
           <li v-else>
             <v-btn color="success" @click="followUser">Follow</v-btn>
           </li>
-          <div v-if="$store.state.user.UserRoleId < this.user.UserRoleId">
-            <li v-if="user.UserRoleId > 1">
-              <v-btn color="success" @click="changePower">升级为管理员</v-btn>
-            </li>
-            <li v-else>
-              <v-btn color="error" @click="changePower">解除管理员职务</v-btn>
-            </li>
-          </div>
         </div>
       </ul>
     </div>
@@ -50,10 +42,10 @@ export default {
     return {
       user: {
         path: './public/images/default.jpg',
-        follower: []
+        follower: [],
+        following: []
       },
-      posts: [],
-      follow: []
+      posts: []
     }
   },
   created () {
@@ -73,6 +65,7 @@ export default {
   methods: {
     async fetchData () {
       var getdata = await authService.getData(this.userId)
+      console.log(getdata.data)
       this.user = getdata.data.user
       this.posts = getdata.data.posts
       this.follow = getdata.data.follow
@@ -81,7 +74,7 @@ export default {
       try {
         var response = await authService.followUser({id: this.userId}, this.$store.state.token)
         this.$store.dispatch('followUser', this.userId)
-        this.$store.dispatch('addSuccess', response.data.info)
+        this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
@@ -91,19 +84,7 @@ export default {
       try {
         var response = await authService.unfollowUser({id: this.userId}, this.$store.state.token)
         this.$store.dispatch('unfollowUser', this.userId)
-        this.$store.dispatch('addSuccess', response.data.info)
-        this.fetchData()
-      } catch (err) {
-        this.$store.dispatch('addError', err.response.data.msg)
-      }
-    },
-    async changePower () {
-      try {
-        var response = await authService.changePower({
-          token: this.$store.state.token,
-          id: this.user.id
-        })
-        this.$store.dispatch('addSuccess', response.data.info)
+        this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)

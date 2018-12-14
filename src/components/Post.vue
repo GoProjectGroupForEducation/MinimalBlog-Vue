@@ -4,9 +4,9 @@
       <div class="basic-div post-header">
         <h1>{{post.title}}</h1>
         <div class="post-meta-bar">
-          <span class="clickable"><div class="logo" @click="moveToProfile(post.author.id)" :style="{backgroundImage: 'url(http://localhost:8081/' + post.author.path + ')'}"></div> {{post.author.username}}</span>
-          <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{comments.length}}</span>
-          <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updatedAt}}</span>
+          <span class="clickable"><div class="logo" @click="moveToProfile(post.author.id)" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div> {{post.author.username}}</span>
+          <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
+          <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updated_at}}</span>
         </div>
       </div>
       <div class="basic-div post-content markdown-content" v-html="compiledMarkdown"></div>
@@ -16,15 +16,15 @@
         </div>
         <div class="comment-list">
           <div class="make-comment" v-if="$store.state.user">
-            <textarea name="comment" placeholder="写下你的评论..." class="comment-editor" :class="{'show-editor': showEditor, 'not-show-editor': !showEditor}" v-model="comment" @focus="showFlag = true" @blur="showFlag = false"></textarea>
+            <textarea name="comment" placeholder="写下你的评论..." class="comment-editor" :class="{'show-editor': showEditor, 'not-show-editor': !showEditor}" v-model="commentContent" @focus="showFlag = true" @blur="showFlag = false"></textarea>
             <v-btn class="cyan" v-if="showEditor" @click="submitComment">Submit</v-btn>
           </div>
-          <p v-if="comments.length === 0">暂无用户评论</p>
+          <p v-if="post.comments.length === 0">暂无用户评论</p>
           <ul v-else>
-            <li v-for="comment in comments" :key="comment.id">
+            <li v-for="comment in post.comments" :key="comment.id">
               <div>
                 <div class="clickable">
-                  <div class="logo" @click="moveToProfile(comment.author.id)" :style="{backgroundImage: 'url(http://localhost:8081/' + comment.author.path + ')'}"></div><h4>{{comment.author.username}}<span v-if="!comment.status">(已被管理员隐藏)</span></h4>
+                  <div class="logo" @click="moveToProfile(comment.creator.id)" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div><h4>{{comment.creator.username}}</h4>
                 </div>
                 <p>{{comment.content}}</p>
                 <v-menu class="comment-menu" v-if="editable(comment)">
@@ -34,12 +34,6 @@
                   <v-list>
                     <v-list-tile @click="showEditComment(comment)">
                       <v-list-tile-title>Edit</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile v-if="$store.state.user.UserRoleId <= 1" @click="toggleComment(comment.id)">
-                      <v-list-tile-title>Toggle</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile v-if="$store.state.user.id === comment.author.id" @click="deleteComment(comment.id)">
-                      <v-list-tile-title>Delete</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
                 </v-menu>
@@ -77,16 +71,12 @@ export default {
     return {
       post: {
         title: '',
-        status: true,
         author: {
-          email: '',
-          path: 'public/images/default.jpg'
+          username: ''
         },
-        favourite: [],
-        updatedAt: ''
+        comments: []
       },
-      comments: [],
-      comment: '',
+      commentContent: '',
       showFlag: false,
       loading: true,
       editComment: false,
@@ -112,32 +102,25 @@ export default {
       return marked(this.post.content)
     },
     showEditor: function () {
-      return this.showFlag || (this.comment.length > 0)
+      return this.showFlag || (this.commentContent.length > 0)
     }
   },
   methods: {
     async fetchData () {
       this.loading = true
-      var getdata
-      if (this.$store.state.isUserLoggedIn && this.$store.state.user.UserRoleId <= 1) {
-        getdata = await postService.getPostAdmin({token: this.$store.state.token}, this.$route.params.id)
-      } else {
-        getdata = await postService.getPost(this.$route.params.id)
-      }
-      this.post = getdata.data.post
-      this.comments = getdata.data.comments
+      var getdata = await postService.getPost(this.$route.params.id)
+      this.post = getdata.data.data
       this.loading = false
     },
     async submitComment () {
       try {
         var response = await postService.addComment({
-          comment: this.comment,
-          authorId: this.$store.state.user.id
+          content: this.commentContent
         }, this.$route.params.id, this.$store.state.token)
         this.showFlag = false
-        this.comment = ''
+        this.commentContent = ''
         this.fetchData()
-        this.$store.dispatch('addSuccess', response.data.info)
+        this.$store.dispatch('addSuccess', response.data.msg)
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
       }
@@ -145,14 +128,13 @@ export default {
     async submitEditComment () {
       try {
         var response = await postService.updateComment({
-          id: this.editCommentId,
           content: this.editCommentContent
-        }, this.$route.params.id, this.$store.state.token)
+        }, this.$route.params.id, this.$store.state.token, this.editCommentId)
         this.editComment = false
         this.editCommentContent = ''
         this.editCommentId = null
         this.fetchData()
-        this.$store.dispatch('addSuccess', response.data.info)
+        this.$store.dispatch('addSuccess', response.data.msg)
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
       }
@@ -161,25 +143,12 @@ export default {
       if (!this.$store.state.user) {
         return false
       }
-      return (this.$store.state.user.UserRoleId <= 1 || this.$store.state.user.username === editTarget.author.username)
+      return this.$store.state.user.username === editTarget.creator.username
     },
     showEditComment (comment) {
       this.editComment = true
       this.editCommentId = comment.id
       this.editCommentContent = comment.content
-    },
-    async deleteComment (commentId) {
-      try {
-        var response = await postService.deleteComment({
-          id: commentId,
-          token: this.$store.state.token
-        })
-        this.$store.dispatch('addSuccess', response.data.info)
-        this.fetchData()
-      } catch (err) {
-        console.log(err)
-        this.$store.dispatch('addError', err.response.data.msg)
-      }
     },
     moveToProfile (userId) {
       this.$router.push({name: 'Profile', params: {id: userId}})

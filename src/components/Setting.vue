@@ -89,9 +89,8 @@ export default {
       try {
         var formData = new FormData()
         formData.append('username', this.$store.state.user.username)
-        formData.append('token', this.$store.state.token)
         formData.append('image', $('#imageUploader')[0].files[0])
-        var response = await authService.updateImage(formData)
+        var response = await authService.updateImage(formData, this.$store.state.token)
         this.$store.dispatch('addSuccess', response.data.info)
         this.fetchData()
       } catch (err) {

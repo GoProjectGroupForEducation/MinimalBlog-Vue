@@ -50,8 +50,8 @@ export default {
   methods: {
     async fetchData () {
       var getdata = await postService.getPost(this.$route.params.id)
-      this.title = getdata.data.post.title
-      this.content = getdata.data.post.content
+      this.title = getdata.data.data.title
+      this.content = getdata.data.data.content
     },
     async submit () {
       try {
@@ -59,7 +59,7 @@ export default {
           title: this.title,
           content: this.content
         }, this.$route.params.id, this.$store.state.token)
-        this.$store.dispatch('addSuccess', response.data.info)
+        this.$store.dispatch('addSuccess', response.data.msg)
         this.$router.push({name: 'Post', params: {id: this.$route.params.id}})
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)

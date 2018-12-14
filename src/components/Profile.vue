@@ -7,9 +7,9 @@
         <ul class="posts-list" v-else>
           <li v-for="post in pageList" :key="post.id">
             <div class="basic-div post-item">
-              <h2 class="post-title"><router-link :to="{name: 'Post', params: {id: post.id}}">{{post.title}}<span v-if="!post.status">(已隐藏)</span></router-link></h2>
+              <h2 class="post-title"><router-link :to="{name: 'Post', params: {id: post.id}}">{{post.title}}</router-link></h2>
               <div>
-                <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(http://localhost:8081/' + post.author.path + ')'}"></div> {{post.author.username}}</span></span>
+                <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div> {{post.author.username}}</span></span>
                 <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
                 <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updatedAt}}</span>
                 <v-menu class="post-menu" v-if="editable(post)">
@@ -19,9 +19,6 @@
                   <v-list>
                     <v-list-tile v-if="$store.state.user.id === post.author.id" @click="editPost(post.id)">
                       <v-list-tile-title>Edit</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile v-if="$store.state.user.id === post.author.id" @click="deletePost(post.id)">
-                      <v-list-tile-title>Delete</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
                 </v-menu>
@@ -115,19 +112,7 @@ export default {
       if (!this.$store.state.isUserLoggedIn) {
         return false
       }
-      return (this.$store.state.user.UserRoleId <= 1 || this.$store.state.user.id === post.author.id)
-    },
-    async deletePost (postId) {
-      try {
-        var response = await postService.deletePost({
-          id: postId,
-          token: this.$store.state.token
-        })
-        this.$store.dispatch('addSuccess', response.data.info)
-        this.fetchData()
-      } catch (err) {
-        this.$store.dispatch('addError', err.response.data.msg)
-      }
+      return this.$store.state.user.id === post.author.id
     },
     moveToProfile (userId) {
       this.$router.push({name: 'Profile', params: {id: userId}})

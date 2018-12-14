@@ -52,8 +52,9 @@ export default {
           title: this.title,
           content: this.content
         }, this.$store.state.token)
-        this.$store.dispatch('addSuccess', response.data.info)
-        this.$router.push({name: 'Post', params: {id: response.data.post.id}})
+        this.$store.dispatch('addSuccess', response.data.msg)
+        console.log(response.data)
+        this.$router.push({name: 'Post', params: {id: response.data.data.id}})
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
       }
