@@ -79,22 +79,22 @@ export default {
     },
     async followUser () {
       try {
-        var response = await authService.followUser({id: this.userId, token: this.$store.state.token})
+        var response = await authService.followUser({id: this.userId}, this.$store.state.token)
         this.$store.dispatch('followUser', this.userId)
         this.$store.dispatch('addSuccess', response.data.info)
         this.fetchData()
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     async unfollowUser () {
       try {
-        var response = await authService.unfollowUser({id: this.userId, token: this.$store.state.token})
+        var response = await authService.unfollowUser({id: this.userId}, this.$store.state.token)
         this.$store.dispatch('unfollowUser', this.userId)
         this.$store.dispatch('addSuccess', response.data.info)
         this.fetchData()
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     async changePower () {
@@ -106,7 +106,7 @@ export default {
         this.$store.dispatch('addSuccess', response.data.info)
         this.fetchData()
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     }
   }

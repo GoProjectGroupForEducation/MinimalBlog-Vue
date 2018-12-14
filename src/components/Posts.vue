@@ -128,7 +128,7 @@ export default {
         this.fetchData()
       } catch (err) {
         console.log(err)
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     moveToProfile (userId) {

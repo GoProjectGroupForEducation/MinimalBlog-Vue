@@ -126,7 +126,7 @@ export default {
         this.$store.dispatch('addSuccess', response.data.info)
         this.fetchData()
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     moveToProfile (userId) {

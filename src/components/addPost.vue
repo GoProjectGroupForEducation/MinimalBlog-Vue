@@ -55,7 +55,7 @@ export default {
         this.$store.dispatch('addSuccess', response.data.info)
         this.$router.push({name: 'Post', params: {id: response.data.post.id}})
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     async $imgAdd (pos, $file) {

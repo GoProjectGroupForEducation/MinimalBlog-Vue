@@ -139,7 +139,7 @@ export default {
         this.fetchData()
         this.$store.dispatch('addSuccess', response.data.info)
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     async submitEditComment () {
@@ -154,7 +154,7 @@ export default {
         this.fetchData()
         this.$store.dispatch('addSuccess', response.data.info)
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     editable (editTarget) {
@@ -178,7 +178,7 @@ export default {
         this.fetchData()
       } catch (err) {
         console.log(err)
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     moveToProfile (userId) {

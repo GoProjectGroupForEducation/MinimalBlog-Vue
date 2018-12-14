@@ -20,11 +20,19 @@ export default {
   getTopUsers () {
     return api().get('topusers')
   },
-  followUser (credentials) {
-    return api().post('follow', credentials)
+  followUser (credentials, token) {
+    return api().post('follow', credentials, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  unfollowUser (credentials) {
-    return api().post('unfollow', credentials)
+  unfollowUser (credentials, token) {
+    return api().post('unfollow', credentials, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
   updateInfo (credentials) {
     return api().post('updateInfo', credentials)

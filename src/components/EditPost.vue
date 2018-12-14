@@ -62,7 +62,7 @@ export default {
         this.$store.dispatch('addSuccess', response.data.info)
         this.$router.push({name: 'Post', params: {id: this.$route.params.id}})
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     clear () {

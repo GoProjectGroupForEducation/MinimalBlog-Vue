@@ -7,10 +7,10 @@
         </v-toolbar>
         <div class="pl-4 pr-4 pt-2 pb-2">
           <v-text-field
-              name="email"
-              type="email"
-              v-model="email"
-              label="Email"
+              name="username"
+              type="string"
+              v-model="username"
+              label="Username"
             ></v-text-field>
           <v-text-field
               name="password"
@@ -36,7 +36,7 @@ import authService from '@/services/authService'
 export default {
   data () {
     return {
-      email: '',
+      username: '',
       password: '',
       error: ''
     }
@@ -44,16 +44,17 @@ export default {
   methods: {
     login () {
       authService.login({
-        email: this.email,
+        username: this.username,
         password: this.password
       }).then((res) => {
+        console.log(res.data)
         this.$store.dispatch('setToken', res.data.data.token.token)
         this.$store.dispatch('setUser', res.data.data.user)
         this.$router.push({
           name: 'Posts'
         })
       }).catch((err) => {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       })
     }
   }

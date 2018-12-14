@@ -59,7 +59,7 @@ export default {
         this.$store.dispatch('setUser', res.data.data.user)
         this.$router.push({name: 'Posts'})
       }).catch((err) => {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       })
     }
   }
