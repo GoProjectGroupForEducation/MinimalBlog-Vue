@@ -9,61 +9,58 @@ export default {
    * @param {*} credentials
    */
   getPosts () {
-    return api().get('posts')
-  },
-  getPostsAdmin (credentials) {
-    return api().post('admin/posts', credentials)
+    return api().get('articles/')
   },
   getPersonPosts (id) {
     return api().get('posts/user/' + id)
-  },
-  getPersonPostsAdmin (credentials, id) {
-    return api().post('admin/posts/user/' + id, credentials)
   },
   getConcernPosts (data) {
     return api().post('posts/follow', data)
   },
   getPost (id) {
-    return api().get('post/' + id)
+    return api().get('articles/' + id)
   },
-  getPostAdmin (credentials, id) {
-    return api().post('admin/post/' + id, credentials)
+  addPost (data, token) {
+    return api().post('articles/', data, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  favouritePost (data) {
-    return api().post('post/favourite', data)
+  updatePost (data, id, token) {
+    return api().put('articles/' + id, data, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  unfavouritePost (data) {
-    return api().post('post/unfavourite', data)
+  addComment (data, id, token) {
+    return api().post('articles/' + id + '/comments/', data, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  addPost (data) {
-    return api().post('post/add', data)
+  updateComment (data, id, token) {
+    return api().put('articles/' + id + '/comments/', data, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  updatePost (data, id) {
-    return api().post('post/update/' + id, data)
+  deletePost (data, token) {
+    return api().post('post/delete', data, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  togglePost (data) {
-    return api().post('post/toggle', data)
-  },
-  addComment (data, id) {
-    return api().post('post/comment/add/' + id, data)
-  },
-  updateComment (data, id) {
-    return api().post('post/comment/update/' + id, data)
-  },
-  toggleComment (data) {
-    return api().post('post/comment/toggle', data)
-  },
-  favouriteComment (data) {
-    return api().post('post/comment/favourite', data)
-  },
-  unfavouriteComment (data) {
-    return api().post('post/comment/unfavourite', data)
-  },
-  deletePost (data) {
-    return api().post('post/delete', data)
-  },
-  deleteComment (data) {
-    return api().post('post/comment/delete', data)
+  deleteComment (data, token) {
+    return api().post('post/comment/delete', data, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
   uploadImg (data) {
     var config = {

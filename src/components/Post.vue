@@ -1,16 +1,10 @@
 <template>
   <div class="post-page">
-    <div v-if="post.block">
+    <div>
       <div class="basic-div post-header">
-        <p>对不起, 该内容已被管理员隐藏</p>
-      </div>
-    </div>
-    <div v-else>
-      <div class="basic-div post-header">
-        <h1>{{post.title}}<span v-if="!post.status">(已被管理员隐藏)</span></h1>
+        <h1>{{post.title}}</h1>
         <div class="post-meta-bar">
           <span class="clickable"><div class="logo" @click="moveToProfile(post.author.id)" :style="{backgroundImage: 'url(http://localhost:8081/' + post.author.path + ')'}"></div> {{post.author.username}}</span>
-          <span class="post-meta favourite" @click="favourite"><v-icon class="meta-icon">fa-thumbs-up</v-icon> {{post.favourite.length}}</span>
           <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{comments.length}}</span>
           <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updatedAt}}</span>
         </div>
@@ -28,17 +22,11 @@
           <p v-if="comments.length === 0">暂无用户评论</p>
           <ul v-else>
             <li v-for="comment in comments" :key="comment.id">
-              <div v-if="comment.block">
-                <p>对不起, 该内容已被管理员隐藏</p>
-              </div>
-              <div v-else>
+              <div>
                 <div class="clickable">
                   <div class="logo" @click="moveToProfile(comment.author.id)" :style="{backgroundImage: 'url(http://localhost:8081/' + comment.author.path + ')'}"></div><h4>{{comment.author.username}}<span v-if="!comment.status">(已被管理员隐藏)</span></h4>
                 </div>
                 <p>{{comment.content}}</p>
-                <div class="comment-meta">
-                  <span @click="favouriteComment(comment)">点赞: {{comment.favourite.length}}</span>
-                </div>
                 <v-menu class="comment-menu" v-if="editable(comment)">
                   <v-btn icon slot="activator">
                     <v-icon color="black">more_vert</v-icon>
@@ -144,9 +132,8 @@ export default {
       try {
         var response = await postService.addComment({
           comment: this.comment,
-          authorId: this.$store.state.user.id,
-          token: this.$store.state.token
-        }, this.$route.params.id)
+          authorId: this.$store.state.user.id
+        }, this.$route.params.id, this.$store.state.token)
         this.showFlag = false
         this.comment = ''
         this.fetchData()
@@ -159,68 +146,11 @@ export default {
       try {
         var response = await postService.updateComment({
           id: this.editCommentId,
-          content: this.editCommentContent,
-          token: this.$store.state.token
-        }, this.$route.params.id)
+          content: this.editCommentContent
+        }, this.$route.params.id, this.$store.state.token)
         this.editComment = false
         this.editCommentContent = ''
         this.editCommentId = null
-        this.fetchData()
-        this.$store.dispatch('addSuccess', response.data.info)
-      } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
-      }
-    },
-    async favourite () {
-      try {
-        if (!this.$store.state.token) {
-          this.$store.dispatch('addError', '未登录')
-          return
-        }
-        const data = {
-          postId: this.post.id,
-          token: this.$store.state.token
-        }
-        var response, flag
-        for (var i = 0, len = this.post.favourite.length; i < len; i++) {
-          if (this.post.favourite[i].giverId === this.$store.state.user.id) {
-            flag = true
-            break
-          }
-        }
-        if (flag) {
-          response = await postService.unfavouritePost(data)
-        } else {
-          response = await postService.favouritePost(data)
-        }
-        this.fetchData()
-        this.$store.dispatch('addSuccess', response.data.info)
-      } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
-      }
-    },
-    async favouriteComment (comment) {
-      try {
-        if (!this.$store.state.token) {
-          this.$store.dispatch('addError', '未登录')
-          return
-        }
-        const data = {
-          commentId: comment.id,
-          token: this.$store.state.token
-        }
-        var response, flag
-        for (var i = 0, len = comment.favourite.length; i < len; i++) {
-          if (comment.favourite[i].giverId === this.$store.state.user.id) {
-            flag = true
-            break
-          }
-        }
-        if (flag) {
-          response = await postService.unfavouriteComment(data)
-        } else {
-          response = await postService.favouriteComment(data)
-        }
         this.fetchData()
         this.$store.dispatch('addSuccess', response.data.info)
       } catch (err) {
@@ -237,15 +167,6 @@ export default {
       this.editComment = true
       this.editCommentId = comment.id
       this.editCommentContent = comment.content
-    },
-    async toggleComment (id) {
-      try {
-        var response = await postService.toggleComment({token: this.$store.state.token, id: id})
-        this.fetchData()
-        this.$store.dispatch('addSuccess', response.data.info)
-      } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
-      }
     },
     async deleteComment (commentId) {
       try {

@@ -49,10 +49,9 @@ export default {
       try {
         const response = await postService.addPost({
           author: this.$store.state.user.id,
-          token: this.$store.state.token,
           title: this.title,
           content: this.content
-        })
+        }, this.$store.state.token)
         this.$store.dispatch('addSuccess', response.data.info)
         this.$router.push({name: 'Post', params: {id: response.data.post.id}})
       } catch (err) {

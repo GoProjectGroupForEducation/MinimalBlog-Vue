@@ -6,14 +6,10 @@
         <div class="info-content" v-else-if="filteredList.length === 0"><h2>No valid Post!</h2></div>
         <ul class="posts-list" v-else>
           <li v-for="post in pageList" :key="post.id">
-            <div class="basic-div post-item" v-if="post.block">
-              对不起, 该内容已被管理员隐藏
-            </div>
-            <div class="basic-div post-item" v-else>
+            <div class="basic-div post-item">
               <h2 class="post-title"><router-link :to="{name: 'Post', params: {id: post.id}}">{{post.title}}<span v-if="!post.status">(已隐藏)</span></router-link></h2>
               <div>
                 <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(http://localhost:8081/' + post.author.path + ')'}"></div> {{post.author.username}}</span></span>
-                <span class="post-meta"><v-icon class="meta-icon">fa-thumbs-up</v-icon> {{post.favourite.length}}</span>
                 <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
                 <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updatedAt}}</span>
                 <v-menu class="post-menu" v-if="editable(post)">
@@ -23,9 +19,6 @@
                   <v-list>
                     <v-list-tile v-if="$store.state.user.id === post.author.id" @click="editPost(post.id)">
                       <v-list-tile-title>Edit</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile v-if="$store.state.user.UserRoleId <= 1" @click="togglePost(post.id)">
-                      <v-list-tile-title>Toggle</v-list-tile-title>
                     </v-list-tile>
                     <v-list-tile v-if="$store.state.user.id === post.author.id" @click="deletePost(post.id)">
                       <v-list-tile-title>Delete</v-list-tile-title>
@@ -117,15 +110,6 @@ export default {
     },
     editPost (id) {
       this.$router.push({name: 'EditPost', params: {id: id}})
-    },
-    async togglePost (id) {
-      try {
-        var response = await postService.togglePost({token: this.$store.state.token, id: id})
-        this.fetchData()
-        this.$store.dispatch('addSuccess', response.data.info)
-      } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
-      }
     },
     editable (post) {
       if (!this.$store.state.isUserLoggedIn) {

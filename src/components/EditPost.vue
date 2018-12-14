@@ -56,10 +56,9 @@ export default {
     async submit () {
       try {
         const response = await postService.updatePost({
-          token: this.$store.state.token,
           title: this.title,
           content: this.content
-        }, this.$route.params.id)
+        }, this.$route.params.id, this.$store.state.token)
         this.$store.dispatch('addSuccess', response.data.info)
         this.$router.push({name: 'Post', params: {id: this.$route.params.id}})
       } catch (err) {
