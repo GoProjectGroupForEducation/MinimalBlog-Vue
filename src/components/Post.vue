@@ -110,6 +110,7 @@ export default {
       this.loading = true
       var getdata = await postService.getPost(this.$route.params.id)
       this.post = getdata.data.data
+      console.log(this.post)
       this.loading = false
     },
     async submitComment () {

@@ -10,7 +10,8 @@ export default new Vuex.Store({
     user: (sessionStorage.getItem('user')) ? JSON.parse(sessionStorage.getItem('user')) : null,
     isUserLoggedIn: (sessionStorage.getItem('userStatus') === 'true') || false,
     error: [],
-    success: []
+    success: [],
+    changeToggle: false
   },
   mutations: {
     setToken (state, token) {
@@ -40,17 +41,19 @@ export default new Vuex.Store({
       }
     },
     followUser (state, userId) {
-      state.user.follow.push(userId)
+      state.user.following.push(userId)
       sessionStorage.user = JSON.stringify(state.user)
+      state.changeToggle = !state.changeToggle
     },
     unfollowUser (state, userId) {
-      for (var i = 0, len = state.user.follow.length; i < len; i++) {
-        if (state.user.follow[i] === userId) {
-          state.user.follow.splice(i, 1)
+      for (var i = 0, len = state.user.following.length; i < len; i++) {
+        if (state.user.following[i] === userId) {
+          state.user.following.splice(i, 1)
           break
         }
       }
       sessionStorage.user = JSON.stringify(state.user)
+      state.changeToggle = !state.changeToggle
     },
     addSuccess (state, success) {
       state.success.push(success)

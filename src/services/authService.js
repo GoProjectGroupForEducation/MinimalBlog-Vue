@@ -21,14 +21,14 @@ export default {
     return api().get('topusers')
   },
   followUser (credentials, token) {
-    return api().post('follow', credentials, {
+    return api().post('user/follow', credentials, {
       headers: {
         'Authorization': token
       }
     })
   },
   unfollowUser (credentials, token) {
-    return api().post('unfollow', credentials, {
+    return api().post('user/unfollow', credentials, {
       headers: {
         'Authorization': token
       }
@@ -46,13 +46,10 @@ export default {
     }
     return api().post('updateImg', data, config)
   },
-  changePower (credentials) {
-    return api().post('changePower', credentials)
-  },
   getFollowUser (id) {
-    return api().get('followUser/' + id)
+    return api().get('user/' + id + '/following')
   },
   getFollower (id) {
-    return api().get('follower/' + id)
+    return api().get('user/' + id + '/follower')
   }
 }

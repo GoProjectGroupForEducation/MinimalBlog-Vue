@@ -7,19 +7,19 @@
         <li>
           <div class="meta">
             <h4 class="meta-header"><v-icon class="icon">fa-file</v-icon> 文章</h4>
-            <p>{{posts.length}}</p>
+            <p>{{user.articles.length}}</p>
           </div>
           <div class="meta">
             <h4 class="meta-header"><v-icon class="icon">fa-heart</v-icon> 关注</h4>
-            <p>{{follow.length}}</p>
+            <p>{{user.following.length}}</p>
           </div>
           <div class="meta">
             <h4 class="meta-header"><v-icon class="icon">fa-star</v-icon> 粉丝</h4>
-            <p>{{user.follower.length}}</p>
+            <p>{{user.followers.length}}</p>
           </div>
         </li>
         <div class="button-list" v-if="showButton">
-          <li v-if="this.$store.state.user.id === this.userId || this.$store.state.user.follow.indexOf(this.userId) !== -1">
+          <li v-if="this.$store.state.user.id === this.userId || this.$store.state.user.following.indexOf(this.userId) !== -1">
             <v-btn color="error" @click="unfollowUser">Unfollow</v-btn>
           </li>
           <li v-else>
@@ -42,10 +42,10 @@ export default {
     return {
       user: {
         path: './public/images/default.jpg',
-        follower: [],
-        following: []
-      },
-      posts: []
+        followers: [],
+        following: [],
+        articles: []
+      }
     }
   },
   created () {
@@ -65,10 +65,7 @@ export default {
   methods: {
     async fetchData () {
       var getdata = await authService.getData(this.userId)
-      console.log(getdata.data)
-      this.user = getdata.data.user
-      this.posts = getdata.data.posts
-      this.follow = getdata.data.follow
+      this.user = getdata.data.data
     },
     async followUser () {
       try {
@@ -76,6 +73,7 @@ export default {
         this.$store.dispatch('followUser', this.userId)
         this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
+        this.$emit('toggle-follow')
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
       }
@@ -86,6 +84,7 @@ export default {
         this.$store.dispatch('unfollowUser', this.userId)
         this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
+        this.$emit('toggle-follow')
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
       }

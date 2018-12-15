@@ -12,10 +12,14 @@ export default {
     return api().get('articles/')
   },
   getPersonPosts (id) {
-    return api().get('posts/user/' + id)
+    return api().get('articles/user/' + id)
   },
-  getConcernPosts (data) {
-    return api().post('posts/follow', data)
+  getConcernPosts (token) {
+    return api().get('articles/concerning', {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
   getPost (id) {
     return api().get('articles/' + id)

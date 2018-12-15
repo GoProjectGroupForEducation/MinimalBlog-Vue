@@ -11,7 +11,7 @@
               <div>
                 <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div> {{post.author.username}}</span></span>
                 <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
-                <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updatedAt}}</span>
+                <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updated_at}}</span>
                 <v-menu class="post-menu" v-if="editable(post)">
                   <v-btn icon slot="activator">
                     <v-icon color="black">more_vert</v-icon>
@@ -30,9 +30,9 @@
       <pagination :maxPage="parseInt(Math.ceil(filteredList.length/8))"/>
     </div>
     <div class="right">
-      <user-info :userId="parseInt(this.$route.params.id)"/>
+      <user-info @toggle-follow="updateList" :userId="parseInt(this.$route.params.id)"/>
       <follow-list :userId="parseInt(this.$route.params.id)"/>
-      <follower-list :userId="parseInt(this.$route.params.id)"/>
+      <follower-list ref="followerList" :userId="parseInt(this.$route.params.id)"/>
     </div>
   </div>
 </template>
@@ -88,6 +88,9 @@ export default {
     '$route': 'fetchData'
   },
   methods: {
+    updateList () {
+      this.$refs.followerList.fetchData()
+    },
     closeSuccessAlert () {
       this.successMsg = ''
     },
@@ -96,13 +99,8 @@ export default {
     },
     async fetchData () {
       this.loading = true
-      var getdata
-      if (this.$store.state.isUserLoggedIn && this.$store.state.user.UserRoleId <= 1) {
-        getdata = await postService.getPersonPostsAdmin({token: this.$store.state.token}, this.$route.params.id)
-      } else {
-        getdata = await postService.getPersonPosts(this.$route.params.id)
-      }
-      this.posts = getdata.data.posts
+      var getdata = await postService.getPersonPosts(this.$route.params.id)
+      this.posts = getdata.data.data
       this.loading = false
     },
     editPost (id) {

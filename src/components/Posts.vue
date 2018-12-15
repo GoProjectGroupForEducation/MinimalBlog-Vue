@@ -94,16 +94,14 @@ export default {
       this.error = ''
     },
     async fetchData () {
-      console.log('Getting posts data!')
       this.loading = true
       var getdata
       if (this.$route.query.mode === 'concern' && this.$store.state.isUserLoggedIn) {
-        getdata = await postService.getConcernPosts({token: this.$store.state.token})
+        getdata = await postService.getConcernPosts(this.$store.state.token)
       } else {
         getdata = await postService.getPosts()
       }
       this.posts = getdata.data.data
-      console.log(this.posts)
       this.loading = false
     },
     editPost (id) {
