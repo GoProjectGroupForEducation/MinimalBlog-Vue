@@ -9,6 +9,11 @@ h2 a {
   padding: 15px 20px;
   margin-bottom: 10px;
 }
+.tag-list-div {
+  width: 100%;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+}
 .basic-div {
   background: white;
   border: 1px solid #f4f4f4;

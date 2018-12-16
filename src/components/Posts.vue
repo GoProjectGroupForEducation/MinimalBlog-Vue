@@ -9,9 +9,9 @@
             <div class="basic-div post-item">
               <h2 class="post-title"><router-link :to="{name: 'Post', params: {id: post.id}}">{{post.title}}</router-link></h2>
               <div>
-                <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div> {{post.author.username}}</span></span>
+                <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(/api/static/'+post.author.iconpath+')'}"></div> {{post.author.username}}</span></span>
                 <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
-                <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updated_at}}</span>
+                <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{formatDate(post.updated_at)}}</span>
                 <v-menu class="post-menu" v-if="editable(post)">
                   <v-btn icon slot="activator">
                     <v-icon color="black">more_vert</v-icon>
@@ -32,6 +32,7 @@
     <div class="right">
       <user-info v-if="$store.state.user" :userId="$store.state.user.id"/>
       <!--<popular-user/>-->
+      <tag-list/>
     </div>
   </div>
 </template>
@@ -42,6 +43,7 @@ import postService from '@/services/postService'
 import Pagination from './Pagination'
 import UserInfo from './UserInfo'
 import PopularUser from './PopularUser'
+import TagList from './TagList'
 
 export default {
   name: 'Posts',
@@ -57,7 +59,8 @@ export default {
     vueLoading,
     UserInfo,
     PopularUser,
-    Pagination
+    Pagination,
+    TagList
   },
   computed: {
     filteredList () {
@@ -74,9 +77,10 @@ export default {
       if (this.$route) {
         keyword = (this.$route.query.keyword || '').toLowerCase()
       }
-      return this.posts
+      var postList = this.posts
         .filter(item => (item.title.toLowerCase().indexOf(keyword) !== -1))
-        .slice((page - 1) * 8, page * 8)
+        .slice((page - 1) * 8, page * 8).sort(this.sortList)
+      return postList
     }
   },
   created () {
@@ -84,19 +88,44 @@ export default {
   },
   watch: {
     '$route.query.mode': 'fetchData',
+    '$route.query.tag': 'fetchData',
     '$store.state.token': 'fetchData'
   },
   methods: {
+    sortList (obj1, obj2) {
+      var objDate1 = Date.parse(obj1.updated_at)
+      var objDate2 = Date.parse(obj2.updated_at)
+      if (objDate1 > objDate2) return -1
+      else if (objDate1 < objDate2) return 1
+      else if (objDate1 === objDate2) return 0
+    },
     closeSuccessAlert () {
       this.successMsg = ''
     },
     closeErrorAlert () {
       this.error = ''
     },
+    formatDate (timestr) {
+      var mydateint = Date.parse(timestr)
+      var date = new Date(mydateint)
+      var y = date.getFullYear()
+      var m = date.getMonth() + 1
+      m = m < 10 ? ('0' + m) : m
+      var d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      var h = date.getHours()
+      var minute = date.getMinutes()
+      minute = minute < 10 ? ('0' + minute) : minute
+      var second = date.getSeconds()
+      second = second < 10 ? ('0' + second) : second
+      return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second
+    },
     async fetchData () {
       this.loading = true
       var getdata
-      if (this.$route.query.mode === 'concern' && this.$store.state.isUserLoggedIn) {
+      if (this.$route.query.tag) {
+        getdata = await postService.getTagPosts(this.$route.query.tag)
+      } else if (this.$route.query.mode === 'concern' && this.$store.state.isUserLoggedIn) {
         getdata = await postService.getConcernPosts(this.$store.state.token)
       } else {
         getdata = await postService.getPosts()
@@ -138,7 +167,7 @@ export default {
 h2.post-title {
   color: #333;
   font-weight: bold;
-  height: 24px;
+  height: 26px;
   overflow: hidden;
   margin-bottom: 20px;
   text-overflow: ellipsis;

@@ -34,17 +34,21 @@ export default {
       }
     })
   },
-  updateInfo (credentials) {
-    return api().post('updateInfo', credentials)
+  updateInfo (credentials, id, token) {
+    return api().put('user/' + id, credentials, {
+      headers: {
+        'Authorization': token
+      }
+    })
   },
-  updateImage (data, token) {
+  updateImage (imgname, data, token) {
     var config = {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token
       }
     }
-    return api().post('updateImg', data, config)
+    return api().put('user/icon/' + imgname, data, config)
   },
   getFollowUser (id) {
     return api().get('user/' + id + '/following')

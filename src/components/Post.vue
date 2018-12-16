@@ -4,9 +4,12 @@
       <div class="basic-div post-header">
         <h1>{{post.title}}</h1>
         <div class="post-meta-bar">
-          <span class="clickable"><div class="logo" @click="moveToProfile(post.author.id)" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div> {{post.author.username}}</span>
+          <span class="clickable"><div class="logo" @click="moveToProfile(post.author.id)" :style="{backgroundImage: 'url(/api/static/'+post.author.iconpath+')'}"></div> {{post.author.username}}</span>
           <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
           <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updated_at}}</span>
+          <div class="post-meta">
+            标签: <span class="tag" v-for="tag in post.tags" :key="tag.Content" @click="changeTag(tag.Content)">{{tag.Content}}</span>
+          </div>
         </div>
       </div>
       <div class="basic-div post-content markdown-content" v-html="compiledMarkdown"></div>
@@ -24,7 +27,7 @@
             <li v-for="comment in post.comments" :key="comment.id">
               <div>
                 <div class="clickable">
-                  <div class="logo" @click="moveToProfile(comment.creator.id)" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div><h4>{{comment.creator.username}}</h4>
+                  <div class="logo" @click="moveToProfile(comment.creator.id)" :style="{backgroundImage: 'url(/api/static/'+comment.creator.iconpath+')'}"></div><h4>{{comment.creator.username}}</h4>
                 </div>
                 <p>{{comment.content}}</p>
                 <v-menu class="comment-menu" v-if="editable(comment)">
@@ -72,9 +75,11 @@ export default {
       post: {
         title: '',
         author: {
+          iconpath: '1.ico',
           username: ''
         },
-        comments: []
+        comments: [],
+        tags: []
       },
       commentContent: '',
       showFlag: false,
@@ -109,8 +114,8 @@ export default {
     async fetchData () {
       this.loading = true
       var getdata = await postService.getPost(this.$route.params.id)
+      console.log(getdata)
       this.post = getdata.data.data
-      console.log(this.post)
       this.loading = false
     },
     async submitComment () {
@@ -151,6 +156,9 @@ export default {
       this.editCommentId = comment.id
       this.editCommentContent = comment.content
     },
+    changeTag (tag) {
+      this.$router.push({name: 'Posts', query: {tag: tag}})
+    },
     moveToProfile (userId) {
       this.$router.push({name: 'Profile', params: {id: userId}})
     }
@@ -176,9 +184,19 @@ export default {
 }
 .post-meta {
   margin-left: 20px;
+  display: inline-block;
 }
-.favourite:hover {
-  cursor: pointer;
+.tag {
+  border: 1px solid #ccc;
+  border-radius: 100px;
+  text-align: center;
+  color: #4d4d4d;
+  margin-right: 8px;
+  padding: 0 8px;
+  height: 21px;
+  min-width: 24px;
+  line-height: 21px;
+  display: inline-block;
 }
 .meta-icon {
   height: 14px;

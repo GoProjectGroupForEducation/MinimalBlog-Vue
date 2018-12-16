@@ -11,6 +11,9 @@ export default {
   getPosts () {
     return api().get('articles/')
   },
+  getTags () {
+    return api().get('tag/')
+  },
   getPersonPosts (id) {
     return api().get('articles/user/' + id)
   },
@@ -20,6 +23,9 @@ export default {
         'Authorization': token
       }
     })
+  },
+  getTagPosts (tag) {
+    return api().get('articles/tag/' + tag)
   },
   getPost (id) {
     return api().get('articles/' + id)
@@ -52,12 +58,13 @@ export default {
       }
     })
   },
-  uploadImg (data) {
+  uploadImg (data, filename, token) {
     var config = {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
       }
     }
-    return api().post('post/image', data, config)
+    return api().post('upload/' + filename, data, config)
   }
 }

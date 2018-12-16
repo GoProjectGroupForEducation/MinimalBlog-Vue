@@ -9,7 +9,7 @@
             <div class="basic-div post-item">
               <h2 class="post-title"><router-link :to="{name: 'Post', params: {id: post.id}}">{{post.title}}</router-link></h2>
               <div>
-                <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div> {{post.author.username}}</span></span>
+                <span class="clickable post-meta" @click="moveToProfile(post.author.id)"><span><div class="logo" :style="{backgroundImage: 'url(/api/static/'+post.author.iconpath+')'}"></div> {{post.author.username}}</span></span>
                 <span class="post-meta"><v-icon class="meta-icon">far fa-comments</v-icon> {{post.comments.length}}</span>
                 <span class="post-meta"><v-icon class="meta-icon">fa-calendar</v-icon> {{post.updated_at}}</span>
                 <v-menu class="post-menu" v-if="editable(post)">
@@ -76,9 +76,10 @@ export default {
       if (this.$route) {
         keyword = (this.$route.query.keyword || '').toLowerCase()
       }
-      return this.posts
+      var postList = this.posts
         .filter(item => (item.title.toLowerCase().indexOf(keyword) !== -1))
-        .slice((page - 1) * 8, page * 8)
+        .slice((page - 1) * 8, page * 8).sort(this.sortList)
+      return postList
     }
   },
   created () {
@@ -88,6 +89,13 @@ export default {
     '$route': 'fetchData'
   },
   methods: {
+    sortList (obj1, obj2) {
+      var objDate1 = Date.parse(obj1.updated_at)
+      var objDate2 = Date.parse(obj2.updated_at)
+      if (objDate1 > objDate2) return -1
+      else if (objDate1 < objDate2) return 1
+      else if (objDate1 === objDate2) return 0
+    },
     updateList () {
       this.$refs.followerList.fetchData()
     },

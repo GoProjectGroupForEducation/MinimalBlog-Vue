@@ -1,6 +1,6 @@
 <template>
   <div class="basic-div" id="info" @click="$router.push({name: 'Profile', params: {id: userId}})">
-    <div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div>
+    <div class="logo" :style="{backgroundImage: 'url(/api/static/'+user.iconpath+')'}"></div>
     <div class="basic-info">
       <ul class="info-list">
         <li class="username">{{user.username}}</li>
@@ -41,7 +41,7 @@ export default {
   data () {
     return {
       user: {
-        path: './public/images/default.jpg',
+        iconpath: '1.ico',
         followers: [],
         following: [],
         articles: []

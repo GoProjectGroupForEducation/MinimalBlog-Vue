@@ -13,6 +13,15 @@
             v-model="title"
             id="post-title"
             ></v-text-field>
+          <v-flex xs6>
+            <h3>Tags</h3>
+          </v-flex>
+          <v-text-field
+            name="input-2"
+            placeholder="Input your tags here...(split with ',')"
+            v-model="tags"
+            id="post-tags"
+          ></v-text-field>
         </v-flex>
       </v-layout>
       <v-layout row>
@@ -38,6 +47,7 @@ export default {
   data () {
     return {
       title: '',
+      tags: '',
       content: ''
     }
   },
@@ -47,25 +57,34 @@ export default {
   methods: {
     async submit () {
       try {
+        var tagObjs = this.tags.split(',')
+        var tagArr = []
+        for (var tag of tagObjs) {
+          tagArr.push({
+            content: tag
+          })
+        }
         const response = await postService.addPost({
           author: this.$store.state.user.id,
           title: this.title,
-          content: this.content
+          content: this.content,
+          tags: tagArr
         }, this.$store.state.token)
         this.$store.dispatch('addSuccess', response.data.msg)
-        console.log(response.data)
         this.$router.push({name: 'Post', params: {id: response.data.data.id}})
       } catch (err) {
         this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     async $imgAdd (pos, $file) {
-      var formData = new FormData()
-      formData.append('username', this.$store.state.user.username)
-      formData.append('image', $file)
-      console.log(formData)
-      var response = await postService.uploadImg(formData)
-      this.$refs.md.$img2Url(pos, 'http://localhost:8081/' + response.data.url)
+      try {
+        var formData = new FormData()
+        formData.append('uploadFile', $file)
+        var response = await postService.uploadImg(formData, $file.name, this.$store.state.token)
+        this.$refs.md.$img2Url(pos, '/api/static/' + response.data.data.imgpath)
+      } catch (err) {
+        console.log(err.response)
+      }
     },
     clear () {
       this.title = ''

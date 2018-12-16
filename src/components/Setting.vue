@@ -19,6 +19,15 @@
             single-line
           ></v-text-field>
         </li>
+        <li><span class="bold-span">Password:</span>
+          <v-text-field
+            name="password"
+            label="Password"
+            type="password"
+            v-model="password"
+            single-line
+          ></v-text-field>
+        </li>
         <v-btn
           class="cyan"
           @click="updateInfo"
@@ -26,7 +35,7 @@
       </ul>
     </div>
     <div class="right">
-      <div class="logo" :style="{backgroundImage: 'url(http://localhost:8081/' + $store.state.user.path + ')'}"></div>
+      <div class="logo" :style="{backgroundImage: 'url(/api/static/' + $store.state.user.iconpath + ')'}"></div>
       <form id="uploadForm" v-show="false">
         <input
           type="file"
@@ -52,7 +61,8 @@ export default {
   data () {
     return {
       email: '',
-      username: ''
+      username: '',
+      password: ''
     }
   },
   created () {
@@ -62,8 +72,7 @@ export default {
   methods: {
     async fetchData () {
       const response = await authService.getData(this.$store.state.user.id)
-      var user = response.data.user
-      user.follow = response.data.follow
+      var user = response.data.data
       this.$store.dispatch('setUser', user)
       this.email = this.$store.state.user.email
       this.username = this.$store.state.user.username
@@ -71,15 +80,14 @@ export default {
     async updateInfo () {
       try {
         var response = await authService.updateInfo({
-          token: this.$store.state.token,
-          id: this.$store.state.user.id,
           email: this.email,
-          username: this.username
-        })
-        this.$store.dispatch('addSuccess', response.data.info)
+          username: this.username,
+          password: this.password
+        }, this.$store.state.user.id, this.$store.state.token)
+        this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
       } catch (err) {
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     },
     showUploader () {
@@ -88,14 +96,13 @@ export default {
     async updateImage () {
       try {
         var formData = new FormData()
-        formData.append('username', this.$store.state.user.username)
-        formData.append('image', $('#imageUploader')[0].files[0])
-        var response = await authService.updateImage(formData, this.$store.state.token)
-        this.$store.dispatch('addSuccess', response.data.info)
+        formData.append('uploadFile', $('#imageUploader')[0].files[0])
+        var response = await authService.updateImage($('#imageUploader')[0].files[0].name, formData, this.$store.state.token)
+        this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
       } catch (err) {
         console.log(err)
-        this.$store.dispatch('addError', err.response.data.error)
+        this.$store.dispatch('addError', err.response.data.msg)
       }
     }
   }

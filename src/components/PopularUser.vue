@@ -4,7 +4,7 @@
     <ul class="user-list">
       <li v-for="(user, index) in users" class="user-item" :key="user.id">
         <div @click="moveToProfile(user.id)">
-          <div class="logo" :style="{backgroundImage: 'url(https://avatars1.githubusercontent.com/u/45589718?s=200&v=4)'}"></div><h3 class="user-name">{{user.username}}</h3>
+          <div class="logo" :style="{backgroundImage: 'url(/api/static/'+post.author.iconpath+')'}"></div><h3 class="user-name">{{user.username}}</h3>
         </div>
         <v-btn class="move" fab dark small color="blue-grey" @click="move(index)">
           <v-icon dark>fa-times</v-icon>
