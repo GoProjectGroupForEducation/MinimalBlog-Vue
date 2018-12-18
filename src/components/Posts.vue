@@ -27,7 +27,7 @@
           </li>
         </ul>
       </div>
-      <pagination :maxPage="parseInt(Math.ceil(filteredList.length/8))"/>
+      <pagination :maxPage="parseInt(Math.ceil(filteredList.length/6))"/>
     </div>
     <div class="right">
       <user-info v-if="$store.state.user" :userId="$store.state.user.id"/>
@@ -79,7 +79,7 @@ export default {
       }
       var postList = this.posts
         .filter(item => (item.title.toLowerCase().indexOf(keyword) !== -1))
-        .slice((page - 1) * 8, page * 8).sort(this.sortList)
+        .slice((page - 1) * 6, page * 6).sort(this.sortList)
       return postList
     }
   },
