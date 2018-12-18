@@ -4,8 +4,8 @@
       <page-header/>
       <div class="infoShower">
         <transition-group name="slide">
-          <info-alert v-for="(error, index) in $store.state.error" :content="error" :type="'error'" :key="index"/>
-          <info-alert v-for="(success, index) in $store.state.success" :content="success" :type="'success'" :key="index"/>
+          <info-alert v-for="error in $store.state.error" :content="error" :type="'error'" :key="error"/>
+          <info-alert v-for="success in $store.state.success" :content="success" :type="'success'" :key="success"/>
         </transition-group>
       </div>
       <main>
