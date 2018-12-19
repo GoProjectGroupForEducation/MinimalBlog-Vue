@@ -84,6 +84,8 @@ export default {
           username: this.username,
           password: this.password
         }, this.$store.state.user.id, this.$store.state.token)
+        this.$store.dispatch('setToken', response.data.data.token)
+        this.$store.dispatch('setUser', response.data.data.user)
         this.$store.dispatch('addSuccess', response.data.msg)
         this.fetchData()
       } catch (err) {

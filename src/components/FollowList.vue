@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-div user-list-div" id="follower-list">
+  <div class="basic-div user-list-div" id="follow-list">
     <h2 class="div-header">关注列表</h2>
     <ul class="user-list">
       <li v-for="user in users" class="user-item" :key="user.id">
@@ -46,7 +46,7 @@ export default {
 * {
   font-size: 18px;
 }
-#follower-list {
+#follow-list {
   height: 394px;
 }
 .logo {
@@ -76,4 +76,5 @@ export default {
 .user-name {
   line-height: 50px;
 }
+.user-list::-webkit-scrollbar {display:none}
 </style>

@@ -49,7 +49,6 @@ export default {
 }
 #follower-list {
   height: 394px;
-  overflow-y: scroll;
 }
 .logo {
   height: 50px;
@@ -78,4 +77,5 @@ export default {
 .user-name {
   line-height: 50px;
 }
+.user-list::-webkit-scrollbar {display:none}
 </style>
