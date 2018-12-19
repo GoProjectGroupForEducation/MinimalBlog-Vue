@@ -20,7 +20,7 @@ export default {
   getConcernPosts (token) {
     return api().get('articles/concerning', {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
@@ -33,28 +33,28 @@ export default {
   addPost (data, token) {
     return api().post('articles/', data, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
   updatePost (data, id, token) {
     return api().put('articles/' + id, data, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
   addComment (data, id, token) {
     return api().post('articles/' + id + '/comments/', data, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
   updateComment (data, id, token, commentId) {
     return api().put('articles/' + id + '/comments/' + commentId, data, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
@@ -62,7 +62,7 @@ export default {
     var config = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     }
     return api().post('upload/' + filename, data, config)

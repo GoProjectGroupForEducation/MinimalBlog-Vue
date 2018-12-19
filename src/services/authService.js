@@ -23,21 +23,21 @@ export default {
   followUser (credentials, token) {
     return api().post('user/follow', credentials, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
   unfollowUser (credentials, token) {
     return api().post('user/unfollow', credentials, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
   updateInfo (credentials, id, token) {
     return api().put('user/' + id, credentials, {
       headers: {
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     })
   },
@@ -45,7 +45,7 @@ export default {
     var config = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': token
+        'Authorization': 'Bearer ' + token
       }
     }
     return api().put('user/icon/' + imgname, data, config)
