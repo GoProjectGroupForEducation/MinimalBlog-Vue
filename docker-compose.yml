@@ -8,10 +8,14 @@ services:
     volumes:
       - ~/mysql:/var/lib/mysql
   database:
-    image: wilsonzhong/minimal_blog_mysql:latest
+    image: mysql:latest
     container_name: blog_mysql
     ports:
       - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      -e MYSQL_DATABASE=blogdb
+      -e MYSQL_USER=blogdb
   server:
     image: wilsonzhong/minimal_blog_server:mysql
     container_name: blog_server
