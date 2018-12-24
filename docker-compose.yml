@@ -4,7 +4,7 @@ services:
     image: wilsonzhong/minimalblog-vue:latest
     container_name: blog_db
     ports:
-      - 8081:8081
+      - 80:80
     volumes:
       - ~/mysql:/var/lib/mysql
   database:
