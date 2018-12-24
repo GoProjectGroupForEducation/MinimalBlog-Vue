@@ -7,7 +7,11 @@ services:
       - 80:80
   database:
     image: wilsonzhong/minimal_blog_mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: zsy2720a
     container_name: blog_mysql
+    ports:
+      - 3306:3306
     volumes:
       - ~/mysql:/var/lib/mysql
   server:
