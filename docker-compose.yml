@@ -2,18 +2,20 @@ version: "3"
 services:
   web:
     image: wilsonzhong/minimalblog-vue:latest
-    container_name: blog_db
+    container_name: blog_vue
     ports:
       - 80:80
     volumes:
       - ~/mysql:/var/lib/mysql
   database:
     image: mysql:latest
+    container_name: blog_mysql
     ports:
       - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=123456
   server:
     image: wilsonzhong/minimal_blog_server:mysql
+    container_name: blog_server
     ports:
       - 8081:8081
