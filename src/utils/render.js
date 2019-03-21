@@ -4,6 +4,9 @@ import Prism from 'prismjs'
 // https://github.com/chjj/marked#overriding-renderer-methods
 const renderer = new marked.Renderer()
 
+renderer.image = (href, title, text) => {
+  return `<img data-src="${href}" :key="${href}" alt="${text}">`
+}
 /**
  * modify anchor tag for Non-English languages
  *

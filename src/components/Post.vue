@@ -12,7 +12,7 @@
           </div>
         </div>
       </div>
-      <div class="basic-div post-content markdown-content" v-html="compiledMarkdown"></div>
+      <div class="basic-div post-content markdown-content" v-lazy-container="{ selector: 'img' }" v-html="compiledMarkdown"></div>
       <div class="basic-div post-comment">
         <div class="comment-header">
           <h1>用户评论</h1>

@@ -1,13 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Register from '@/components/Register'
-import Login from '@/components/Login'
-import Posts from '@/components/Posts'
-import Post from '@/components/Post'
-import AddPost from '@/components/addPost'
-import EditPost from '@/components/EditPost'
-import Setting from '@/components/Setting'
-import Profile from '@/components/Profile'
 
 Vue.use(Router)
 
@@ -21,42 +13,42 @@ const router = new Router({
     {
       path: '/post/add',
       name: 'AddPost',
-      component: AddPost
+      component: (resolve) => require(['../components/addPost.vue'], resolve)
     },
     {
       path: '/post/edit/:id',
       name: 'EditPost',
-      component: EditPost
+      component: (resolve) => require(['../components/EditPost.vue'], resolve)
     },
     {
       path: '/post/:id',
       name: 'Post',
-      component: Post
+      component: (resolve) => require(['../components/Post.vue'], resolve)
     },
     {
       path: '/posts',
       name: 'Posts',
-      component: Posts
+      component: (resolve) => require(['../components/Posts.vue'], resolve)
     },
     {
       path: '/register',
       name: 'Register',
-      component: Register
+      component: (resolve) => require(['../components/Register.vue'], resolve)
     },
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: (resolve) => require(['../components/Login.vue'], resolve)
     },
     {
       path: '/setting',
       name: 'Setting',
-      component: Setting
+      component: (resolve) => require(['../components/Setting.vue'], resolve)
     },
     {
       path: '/profile/:id',
       name: 'Profile',
-      component: Profile
+      component: (resolve) => require(['../components/Profile.vue'], resolve)
     }
   ]
 })

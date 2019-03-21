@@ -12,6 +12,7 @@ import 'jquery'
 
 Vue.config.productionTip = false
 Vue.use(Vuetify)
+Vue.use(VueLazyload)
 
 sync(store, router)
 
